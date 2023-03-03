@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="博客,生活吐槽,学习记录">
+    <meta name="description" content="生活吐槽 &amp; 学习记录">
+    <meta name="author" content="别听鬼故事">
+    
+    <title>
+        
+            CentOS7入门教程 |
+        
+        蓝星归途
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="https://img.vvstory.top/favicon.ico">
+    
+<link rel="stylesheet" href="/font/css/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/font/css/regular.min.css">
+
+    
+<link rel="stylesheet" href="/font/css/solid.min.css">
+
+    
+<link rel="stylesheet" href="/font/css/brands.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"www.langitu.top","root":"/","language":"zh-CN","path":"search.json"}
+    KEEP.theme_config = {"toc":{"enable":true,"number":true,"expand_all":false,"init_open":true},"style":{"primary_color":"#0066cc","logo":"https://img.vvstory.top/logo.png","favicon":"https://img.vvstory.top/favicon.ico","avatar":"https://img.vvstory.top/miao_8X.jpg","font_size":null,"font_family":null,"hover":{"shadow":true,"scale":true},"first_screen":{"enable":true,"header_transparent":false,"background_img":"/images/bg.svg","description":"蓝星归途日志簿。","font_color":null,"hitokoto":false},"scroll":{"progress_bar":false,"percent":false}},"local_search":{"enable":true,"preload":false},"code_copy":{},"code_block":{"tools":{"enable":true,"style":"mac"},"highlight_theme":"obsidian"},"side_tools":{},"pjax":{"enable":false},"lazyload":{"enable":true},"comment":{"enable":false,"use":"gitalk","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":"mekumiao","github_admins":["mekumiao"],"repository":"keep-blog-comments","client_id":"34037fb086c6ce4c67cc","client_secret":"d86b31331d4e124b0439ee122dfbdd0031f72700","proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.8"},"waline":{"server_url":null,"reaction":false,"version":2}},"post":{"author_label":{"enable":true,"auto":false,"custom_label_list":["攻城兔","攻城豹","攻城狮"]},"word_count":{"enable":true,"wordcount":true,"min2read":true},"img_align":"left","copyright_info":true},"version":"3.6.1"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+                <a class="logo-image" href="/">
+                    <img src="https://img.vvstory.top/logo.png">
+                </a>
+            
+            <a class="logo-title" href="/">
+               蓝星归途
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                友链
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/about"
+                            >
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">友链</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/about">关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="post-page-container">
+        <div class="article-content-container">
+
+            <div class="article-title">
+                <span class="title-hover-animation">CentOS7入门教程</span>
+            </div>
+
+            
+                <div class="article-header">
+                    <div class="avatar">
+                        <img src="https://img.vvstory.top/miao_8X.jpg">
+                    </div>
+                    <div class="info">
+                        <div class="author">
+                            <span class="name">别听鬼故事</span>
+                            
+                                <span class="author-label">攻城狮</span>
+                            
+                        </div>
+                        <div class="meta-info">
+                            
+<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        
+            <i class="fa-regular fa-calendar-plus"></i>&nbsp;
+        
+        <span class="pc">2023-01-14 19:57:23</span>
+        <span class="mobile">2023-01-14 19:57</span>
+    </span>
+    
+        <span class="article-update-date article-meta-item">
+        <i class="fas fa-file-pen"></i>&nbsp;
+        <span class="pc">2023-01-14 19:57:23</span>
+    </span>
+    
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/%E5%BC%80%E5%8F%91%E6%96%87%E6%A1%A3/">开发文档</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        &gt; <a href="/categories/%E5%BC%80%E5%8F%91%E6%96%87%E6%A1%A3/CentOS7/">CentOS7</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/CentOS7/">CentOS7</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                        </div>
+                    </div>
+                </div>
+            
+
+            <div class="article-content keep-markdown-body">
+                
+
+                <p>CentOS 常用命令。</p>
+<p><img  
+                     lazyload
+                     alt="image"
+                     data-src="https://img.vvstory.top/upload/202301142002133.png"
+                      alt="CentOS图标"
+                ></p>
+<span id="more"></span>
+
+<h2 id="查看-centos-系统发布版本"><a href="#查看-centos-系统发布版本" class="headerlink" title="查看 centos 系统发布版本"></a>查看 centos 系统发布版本</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装软件包</span></span><br><span class="line">yum -y install dotnet-sdk-6</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重新安装包</span></span><br><span class="line">yum -y reinstall dotnet-sdk-6.0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 卸载软件包</span></span><br><span class="line">yum remove dotnet-sdk-6</span><br></pre></td></tr></table></figure>
+
+<h2 id="查看磁盘信息"><a href="#查看磁盘信息" class="headerlink" title="查看磁盘信息"></a>查看磁盘信息</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 显示磁盘空间</span></span><br><span class="line"><span class="built_in">df</span> -m</span><br></pre></td></tr></table></figure>
+
+<h2 id="在-centos-上安装-dotnet"><a href="#在-centos-上安装-dotnet" class="headerlink" title="在 centos 上安装 dotnet"></a>在 centos 上安装 dotnet</h2><p><a class="link"   target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/dotnet/core/install/linux-centos" >文档<i class="fas fa-external-link-alt"></i></a></p>
+<p>第一次安装时需要执行已下命令</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -Uvh https://packages.microsoft.com/config/centos/7/packages-microsoft-prod.rpm</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum -y install dotnet-sdk-6.0</span><br><span class="line">yum -y install aspnetcore-runtime-6.0</span><br></pre></td></tr></table></figure>
+
+<h2 id="find"><a href="#find" class="headerlink" title="find"></a>find</h2><p>文件查找</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查找根目录下(包含子目录)的文件</span></span><br><span class="line">find / -name nginx.conf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 模糊搜索（加双引号）</span></span><br><span class="line">find / -name <span class="string">&quot;*.conf&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 不区分大小写</span></span><br><span class="line">find / -iname <span class="string">&quot;*.conf&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除搜索到的文件</span></span><br><span class="line">find / -iname <span class="string">&quot;*.conf&quot;</span> -<span class="built_in">exec</span> <span class="built_in">rm</span> &#123;&#125; \;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 排除文件夹搜索</span></span><br><span class="line">find / -path /mnt -prune -o -iname <span class="string">&quot;docker.*&quot;</span> -<span class="built_in">type</span> f</span><br></pre></td></tr></table></figure>
+
+<h2 id="chmod"><a href="#chmod" class="headerlink" title="chmod"></a>chmod</h2><p>在 winscp 上面建了一个文件，但是在 centos 上没有权限执行。需要先修改文件权限后，才可执行。执行时使用 .&#x2F;identity.sh 执行</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改文件权限</span></span><br><span class="line"><span class="built_in">chmod</span> +x identity.sh</span><br></pre></td></tr></table></figure>
+
+<h2 id="mv"><a href="#mv" class="headerlink" title="mv"></a>mv</h2><p>1.移动文件或文件夹<br>2.重命名文件或文件夹</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mv</span> file.txt filename.txt</span><br></pre></td></tr></table></figure>
+
+<h2 id="systemctl"><a href="#systemctl" class="headerlink" title="systemctl"></a>systemctl</h2><p>设置 service 文件 <a class="link"   target="_blank" rel="noopener" href="https://blog.51cto.com/u_15310950/3170899" >https://blog.51cto.com/u_15310950/3170899<i class="fas fa-external-link-alt"></i></a></p>
+<p>示例文件：<code>/etc/systemd/system/dnsserver.service</code></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=&quot;DnsServer Service&quot;</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">GuessMainPID=true</span><br><span class="line">WorkingDirectory=/var/www/dnsserver/</span><br><span class="line">StandardOutput=journal</span><br><span class="line">StandardError=journal</span><br><span class="line">ExecStart=/usr/bin/dotnet DnsService.dll</span><br><span class="line">Restart=always</span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+
+<br/>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看启动项</span></span><br><span class="line">systemctl list-units --<span class="built_in">type</span>=service</span><br><span class="line"></span><br><span class="line"><span class="comment"># 移除服务的开机自启</span></span><br><span class="line">systemctl <span class="built_in">disable</span> gitlib.service</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看启动失败的服务</span></span><br><span class="line">systemctl --failed</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看开机自启动的服务列表</span></span><br><span class="line">systemctl list-unit-files | grep enabled</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动文件变更后用与重新加载service的命令</span></span><br><span class="line">systemctl daemon-reload</span><br></pre></td></tr></table></figure>
+
+<h2 id="journalctl"><a href="#journalctl" class="headerlink" title="journalctl"></a>journalctl</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看systemctl启动日志</span></span><br><span class="line"><span class="comment"># 当服务启动失败时，又没有提示的情况下，可以使用下列命令来查看启动日志</span></span><br><span class="line">journalctl -f</span><br><span class="line"></span><br><span class="line"><span class="comment"># 推荐使用</span></span><br><span class="line">journalctl -xe</span><br></pre></td></tr></table></figure>
+
+<h2 id="rpm"><a href="#rpm" class="headerlink" title="rpm"></a>rpm</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装rpm包</span></span><br><span class="line">rpm -ivh example.rpm</span><br><span class="line">rpm -ivh https://example.rpm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查找已安装的软件</span></span><br><span class="line">rpm -qa</span><br><span class="line">rpm -qa | grep gitlib</span><br><span class="line"></span><br><span class="line"><span class="comment"># 卸载gitlib和其依赖项</span></span><br><span class="line">rpm -e gitlib</span><br><span class="line"><span class="comment"># 卸载rpm安装的软件 不卸载依赖项</span></span><br><span class="line">rpm -e --nodeps gitlib</span><br><span class="line"><span class="comment"># rpm -e --nodeps java-1.6.0-openjdk-1.6.0.0-1.66.1.13.0.el6.i686</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="tail"><a href="#tail" class="headerlink" title="tail"></a>tail</h2><p>一般用户查看日志文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 实时显示日志内容</span></span><br><span class="line"><span class="built_in">tail</span> -f 文件名</span><br></pre></td></tr></table></figure>
+
+<h2 id="临时环境变量"><a href="#临时环境变量" class="headerlink" title="临时环境变量"></a>临时环境变量</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置变量</span></span><br><span class="line">config = test_config</span><br><span class="line"><span class="comment"># 打印变量</span></span><br><span class="line"><span class="built_in">echo</span> config</span><br><span class="line"><span class="comment"># 使用变量</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$config</span>/name</span><br></pre></td></tr></table></figure>
+
+<h2 id="yum"><a href="#yum" class="headerlink" title="yum"></a>yum</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 列出已安装的程序包</span></span><br><span class="line">yum list installed</span><br><span class="line"></span><br><span class="line"><span class="comment"># 列出可更新的程序包</span></span><br><span class="line">yum list updates</span><br><span class="line"></span><br><span class="line"><span class="comment"># 显示已安装的程序包</span></span><br><span class="line">yum list installed | grep axel</span><br><span class="line"></span><br><span class="line"><span class="comment"># 卸载包</span></span><br><span class="line">yum erase nginx.x86_64</span><br></pre></td></tr></table></figure>
+
+<h2 id="axel"><a href="#axel" class="headerlink" title="axel"></a>axel</h2><p>多线程下载工具</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum -y install axel</span><br><span class="line"></span><br><span class="line">axel -n 10 https://www.baidu.com.exe</span><br></pre></td></tr></table></figure>
+
+<h2 id="软链接-（快捷方式）"><a href="#软链接-（快捷方式）" class="headerlink" title="软链接 （快捷方式）"></a>软链接 （快捷方式）</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ln</span> /usr/local/lib/docker/cli-plugins/docker-compose /usr/lib/bin/docker-compose</span><br></pre></td></tr></table></figure>
+
+<h2 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## 打开文件</span></span><br><span class="line">vi /etc/profile</span><br><span class="line"></span><br><span class="line"><span class="comment">## 在最后添加这行</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:/usr/local/git/bin</span><br><span class="line"></span><br><span class="line"><span class="comment"># 刷新环境变量</span></span><br><span class="line"><span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure>
+
+<h2 id="ps"><a href="#ps" class="headerlink" title="ps"></a>ps</h2><p><a class="link"   target="_blank" rel="noopener" href="https://www.dandelioncloud.cn/article/details/1468169757978533889" >文档<i class="fas fa-external-link-alt"></i></a></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看所有进程</span></span><br><span class="line">ps aux</span><br></pre></td></tr></table></figure>
+
+            </div>
+
+            
+                <div class="post-copyright-info">
+                    
+<div class="article-copyright-info-container">
+    <ul class="copyright-info-content">
+        <li class="post-title">
+            <span class="type">本文标题</span>：<span class="content">CentOS7入门教程</span>
+        </li>
+        <li class="post-author">
+            <span class="type">本文作者</span>：<span class="content">别听鬼故事</span>
+        </li>
+        <li class="post-time">
+            <span class="type">创建时间</span>：<span class="content">2023-01-14 19:57:23</span>
+        </li>
+        <li class="post-link">
+            <span class="type">本文链接</span>：<span class="content">posts/CentOS7入门教程/</span>
+        </li>
+        <li class="post-license">
+            <span class="type">版权声明</span>：<span class="content">本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！</span>
+        </li>
+    </ul>
+    <div class="copy-copyright-info flex-center tooltip" data-content="复制版权信息" data-offset-y="-2px">
+        <i class="fa-solid fa-copy"></i>
+    </div>
+</div>
+
+                </div>
+            
+
+            
+                <ul class="post-tags-box">
+                    
+                        <li class="tag-item">
+                            <a href="/tags/CentOS7/">#CentOS7</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            
+
+            
+                <div class="article-nav">
+                    
+                        <div class="article-prev">
+                            <a class="prev"
+                               rel="prev"
+                               href="/posts/VSCode%E5%B8%B8%E7%94%A8%E5%BF%AB%E6%8D%B7%E9%94%AE/"
+                            >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                                <span class="title flex-center">
+                                <span class="post-nav-title-item">VSCode常用快捷键</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                            </a>
+                        </div>
+                    
+                    
+                        <div class="article-next">
+                            <a class="next"
+                               rel="next"
+                               href="/posts/%E6%B8%85%E7%90%86dns%E7%BC%93%E5%AD%98/"
+                            >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">清理dns缓存</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                                <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                            </a>
+                        </div>
+                    
+                </div>
+            
+
+            
+        </div>
+
+        
+            <div class="toc-content-container">
+                <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B-centos-%E7%B3%BB%E7%BB%9F%E5%8F%91%E5%B8%83%E7%89%88%E6%9C%AC"><span class="nav-number">1.</span> <span class="nav-text">查看 centos 系统发布版本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E7%A3%81%E7%9B%98%E4%BF%A1%E6%81%AF"><span class="nav-number">2.</span> <span class="nav-text">查看磁盘信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8-centos-%E4%B8%8A%E5%AE%89%E8%A3%85-dotnet"><span class="nav-number">3.</span> <span class="nav-text">在 centos 上安装 dotnet</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#find"><span class="nav-number">4.</span> <span class="nav-text">find</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chmod"><span class="nav-number">5.</span> <span class="nav-text">chmod</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mv"><span class="nav-number">6.</span> <span class="nav-text">mv</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#systemctl"><span class="nav-number">7.</span> <span class="nav-text">systemctl</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#journalctl"><span class="nav-number">8.</span> <span class="nav-text">journalctl</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rpm"><span class="nav-number">9.</span> <span class="nav-text">rpm</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tail"><span class="nav-number">10.</span> <span class="nav-text">tail</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%B4%E6%97%B6%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">11.</span> <span class="nav-text">临时环境变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#yum"><span class="nav-number">12.</span> <span class="nav-text">yum</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#axel"><span class="nav-number">13.</span> <span class="nav-text">axel</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AF%E9%93%BE%E6%8E%A5-%EF%BC%88%E5%BF%AB%E6%8D%B7%E6%96%B9%E5%BC%8F%EF%BC%89"><span class="nav-number">14.</span> <span class="nav-text">软链接 （快捷方式）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">15.</span> <span class="nav-text">环境变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ps"><span class="nav-number">16.</span> <span class="nav-text">ps</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            
+<footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+                <span>2020</span> -
+            
+            2023
+            
+                &nbsp;<i class="fas fa-heart icon-animate"></i>
+                &nbsp;<a href="/">别听鬼故事</a>
+            
+        </div>
+        
+            <script async 
+                    src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                    访问人数&nbsp;<span id="busuanzi_value_site_uv"></span>&ensp;
+                
+                
+                    总访问量&nbsp;<span id="busuanzi_value_site_pv"></span>
+                
+            </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.6.1</a>
+        </div>
+        
+        
+            <div class="deploy-info info-item">
+                
+                    本站由 <span class="tooltip" data-content="GitHub Pages"><img src="/images/deploy-provider/github.png"></span> 提供部署服务
+                
+            </div>
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-block.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/post-helper.js"></script>
+
+        
+            
+<script src="/js/libs/anime.min.js"></script>
+
+        
+        
+            
+<script src="/js/toc.js"></script>
+
+        
+    
+</div>
+
+
+
+</body>
+</html>
