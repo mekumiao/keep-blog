@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.sdaxia.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.17.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="使用 powershell 命令创建自定义根证书，并且颁发服务器证书">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自定义CA根证书及颁发证书">
+<meta property="og:url" content="https://www.sdaxia.top/posts/20230113-7a46a2c07501.html">
+<meta property="og:site_name" content="宋大侠">
+<meta property="og:description" content="使用 powershell 命令创建自定义根证书，并且颁发服务器证书">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-01-13T00:26:29.000Z">
+<meta property="article:modified_time" content="2023-01-13T00:26:29.000Z">
+<meta property="article:author" content="别听鬼故事">
+<meta property="article:tag" content="openssl">
+<meta property="article:tag" content="ca">
+<meta property="article:tag" content="自签名证书">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.sdaxia.top/posts/20230113-7a46a2c07501.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.sdaxia.top/posts/20230113-7a46a2c07501.html","path":"posts/20230113-7a46a2c07501.html","title":"自定义CA根证书及颁发证书"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>自定义CA根证书及颁发证书 | 宋大侠</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">宋大侠</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">宋大侠日志簿</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-gallery"><a href="/gallery/" rel="section"><i class="fa fa-images fa-fw"></i>画廊</a></li><li class="menu-item menu-item-links"><a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>友链</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="nav-number">1.</span> <span class="nav-text">参考链接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E5%86%B3%E6%9D%A1%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">先决条件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AE%89%E8%A3%85-openssl"><span class="nav-number">2.1.</span> <span class="nav-text">1.安装 openssl</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%9C%A8%E5%B7%A5%E4%BD%9C%E7%9B%AE%E5%BD%95%E4%B8%8B%E6%96%B0%E5%BB%BAopenssl-cnf%E6%96%87%E4%BB%B6%EF%BC%8C%E5%86%85%E5%AE%B9%E5%A6%82%E4%B8%8B"><span class="nav-number">2.2.</span> <span class="nav-text">2.在工作目录下新建openssl.cnf文件，内容如下</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%88%9B%E5%BB%BA%E6%A0%B9%E8%AF%81%E4%B9%A6%EF%BC%88%E8%87%AA%E7%AD%BE%E5%90%8D%E8%AF%81%E4%B9%A6%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">一、创建根证书（自签名证书）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E8%AF%81%E4%B9%A6%E5%AF%86%E9%92%A5"><span class="nav-number">3.1.</span> <span class="nav-text">1. 创建证书密钥</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%9B%E5%BB%BA%E7%AD%BE%E5%90%8D%E8%AF%B7%E6%B1%82"><span class="nav-number">3.2.</span> <span class="nav-text">2. 创建签名请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%88%9B%E5%BB%BA%E8%AF%81%E4%B9%A6"><span class="nav-number">3.3.</span> <span class="nav-text">3. 创建证书</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%88%9B%E5%BB%BA%E4%B8%AD%E9%97%B4%E8%AF%81%E4%B9%A6"><span class="nav-number">4.</span> <span class="nav-text">二、创建中间证书</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E8%AF%81%E4%B9%A6%E5%AF%86%E9%92%A5-1"><span class="nav-number">4.1.</span> <span class="nav-text">1.创建证书密钥</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%9B%E5%BB%BA%E7%AD%BE%E5%90%8D%E8%AF%B7%E6%B1%82-1"><span class="nav-number">4.2.</span> <span class="nav-text">2.创建签名请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%88%9B%E5%BB%BA%E8%AF%81%E4%B9%A6-1"><span class="nav-number">4.3.</span> <span class="nav-text">3.创建证书</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%88%9B%E5%BB%BA%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AF%81%E4%B9%A6"><span class="nav-number">5.</span> <span class="nav-text">三、创建服务器证书</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E8%AF%81%E4%B9%A6%E5%AF%86%E9%92%A5-2"><span class="nav-number">5.1.</span> <span class="nav-text">1.创建证书密钥</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%9B%E5%BB%BA%E7%AD%BE%E5%90%8D%E8%AF%B7%E6%B1%82-2"><span class="nav-number">5.2.</span> <span class="nav-text">2.创建签名请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%88%9B%E5%BB%BA%E8%AF%81%E4%B9%A6-2"><span class="nav-number">5.3.</span> <span class="nav-text">3.创建证书</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%81%E4%B9%A6%E8%BD%AC%E6%8D%A2"><span class="nav-number">6.</span> <span class="nav-text">证书转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%91%BD%E4%BB%A4"><span class="nav-number">7.</span> <span class="nav-text">其他命令</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="别听鬼故事"
+      src="https://i.yuxiaoyu.top/logo.png">
+  <p class="site-author-name" itemprop="name">别听鬼故事</p>
+  <div class="site-description" itemprop="description">生活吐槽 & 学习记录</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.sdaxia.top/posts/20230113-7a46a2c07501.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://i.yuxiaoyu.top/logo.png">
+      <meta itemprop="name" content="别听鬼故事">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="宋大侠">
+      <meta itemprop="description" content="生活吐槽 & 学习记录">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="自定义CA根证书及颁发证书 | 宋大侠">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          自定义CA根证书及颁发证书
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-01-13 08:26:29" itemprop="dateCreated datePublished" datetime="2023-01-13T08:26:29+08:00">2023-01-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%BC%80%E5%8F%91%E6%96%87%E6%A1%A3/" itemprop="url" rel="index"><span itemprop="name">开发文档</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%BC%80%E5%8F%91%E6%96%87%E6%A1%A3/OpenSSL/" itemprop="url" rel="index"><span itemprop="name">OpenSSL</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>使用 powershell 命令创建自定义根证书，并且颁发服务器证书</p>
+<span id="more"></span>
+
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/will-space/p/11913744.html?ivk_sa=1024320u">参考文档</a></p>
+<h2 id="先决条件"><a href="#先决条件" class="headerlink" title="先决条件"></a>先决条件</h2><h3 id="1-安装-openssl"><a href="#1-安装-openssl" class="headerlink" title="1.安装 openssl"></a>1.安装 openssl</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># centos 下载 openssl</span></span><br><span class="line">wget https://www.openssl.org/source/openssl-1.1.1i.tar.gz</span><br><span class="line"><span class="comment"># windows 安装步骤得自行百度，这里就不写了。因为在写文档之时我已经装好了，没有必要写。</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-在工作目录下新建openssl-cnf文件，内容如下"><a href="#2-在工作目录下新建openssl-cnf文件，内容如下" class="headerlink" title="2.在工作目录下新建openssl.cnf文件，内容如下"></a>2.在工作目录下新建<code>openssl.cnf</code>文件，内容如下</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">[ v3_ca ]</span><br><span class="line">basicConstraints        = critical, CA:TRUE</span><br><span class="line">subjectKeyIdentifier    = <span class="built_in">hash</span></span><br><span class="line">authorityKeyIdentifier  = keyid:always, issuer:always</span><br><span class="line">keyUsage                = critical, cRLSign, digitalSignature, keyCertSign</span><br><span class="line"></span><br><span class="line">[ v3_ica ]</span><br><span class="line">basicConstraints        = critical, CA:TRUE, pathlen:0</span><br><span class="line">subjectKeyIdentifier    = <span class="built_in">hash</span></span><br><span class="line">authorityKeyIdentifier  = keyid:always, issuer:always</span><br><span class="line">keyUsage                = critical, cRLSign, digitalSignature, keyCertSign</span><br><span class="line"></span><br><span class="line">[ v3_asus_ca ]</span><br><span class="line">basicConstraints        = critical, CA:FALSE</span><br><span class="line">subjectKeyIdentifier    = <span class="built_in">hash</span></span><br><span class="line">authorityKeyIdentifier  = keyid:always, issuer:always</span><br><span class="line">keyUsage                = critical, nonRepudiation, digitalSignature, keyEncipherment, keyAgreement</span><br><span class="line">extendedKeyUsage        = critical, serverAuth, clientAuth, timeStamping</span><br><span class="line">subjectAltName          = @alt_asus_ca</span><br><span class="line"></span><br><span class="line">[alt_asus_ca]</span><br><span class="line">DNS.1=localhost</span><br><span class="line">DNS.2=192.168.0.101</span><br><span class="line">DNS.3=192.168.43.189</span><br><span class="line"></span><br><span class="line">IP.1=::1</span><br><span class="line">IP.2=127.0.0.1</span><br><span class="line">IP.3=192.168.0.101</span><br><span class="line">IP.4=192.168.43.189</span><br></pre></td></tr></table></figure>
+
+<h2 id="一、创建根证书（自签名证书）"><a href="#一、创建根证书（自签名证书）" class="headerlink" title="一、创建根证书（自签名证书）"></a>一、创建根证书（自签名证书）</h2><h3 id="1-创建证书密钥"><a href="#1-创建证书密钥" class="headerlink" title="1. 创建证书密钥"></a>1. 创建证书密钥</h3><ul>
+<li>RSA 方式（首选）</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa -out root_ca.key 4096</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>ECC 方式</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl ecparam -out root_ca.key -name prime256v1 -genkey</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-创建签名请求"><a href="#2-创建签名请求" class="headerlink" title="2. 创建签名请求"></a>2. 创建签名请求</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -sha256 `</span><br><span class="line">  -key root_ca.key `</span><br><span class="line">  -out root_ca.csr `</span><br><span class="line">  -subj <span class="string">&quot;/C=CN/ST=GD/L=GZ/O=Global Village/OU=IT/CN=root_ca&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-创建证书"><a href="#3-创建证书" class="headerlink" title="3. 创建证书"></a>3. 创建证书</h3><ul>
+<li>生成<code>v3</code>版本证书，携带扩展信息（首选）</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># crt 格式</span></span><br><span class="line">openssl x509 -req -sha256 `</span><br><span class="line">  -days 3650 `</span><br><span class="line">  -extfile openssl.cnf `</span><br><span class="line">  -extensions v3_ca `</span><br><span class="line">  -signkey root_ca.key `</span><br><span class="line">  -<span class="keyword">in</span> root_ca.csr `</span><br><span class="line">  -out root_ca.crt</span><br><span class="line"></span><br><span class="line"><span class="comment"># pem格式</span></span><br><span class="line">openssl x509 -req -sha256 `</span><br><span class="line">  -days 3650 `</span><br><span class="line">  -extfile openssl.cnf `</span><br><span class="line">  -extensions v3_ca `</span><br><span class="line">  -signkey root_ca.key `</span><br><span class="line">  -<span class="keyword">in</span> root_ca.csr `</span><br><span class="line">  -out root_ca.pem</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>生成<code>v1</code>版本证书</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># crt 格式</span></span><br><span class="line">openssl x509 -req -sha256 `</span><br><span class="line">  -days 3650 `</span><br><span class="line">  -signkey root_ca.key `</span><br><span class="line">  -<span class="keyword">in</span> root_ca.csr `</span><br><span class="line">  -out root_ca.crt</span><br><span class="line"></span><br><span class="line"><span class="comment"># pem 格式</span></span><br><span class="line">openssl x509 -req -sha256 `</span><br><span class="line">  -days 3650 `</span><br><span class="line">  -signkey root_ca.key `</span><br><span class="line">  -<span class="keyword">in</span> root_ca.csr `</span><br><span class="line">  -out root_ca.pem</span><br></pre></td></tr></table></figure>
+
+<h2 id="二、创建中间证书"><a href="#二、创建中间证书" class="headerlink" title="二、创建中间证书"></a>二、创建中间证书</h2><h3 id="1-创建证书密钥-1"><a href="#1-创建证书密钥-1" class="headerlink" title="1.创建证书密钥"></a>1.创建证书密钥</h3><ul>
+<li>RSA 方式（首选）</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa -out sign_ca.key 4096</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>ECC 方式</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl ecparam -out sign_ca.key -name prime256v1 -genkey</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-创建签名请求-1"><a href="#2-创建签名请求-1" class="headerlink" title="2.创建签名请求"></a>2.创建签名请求</h3><blockquote>
+<p><code>-subj</code>选项中 <code>CN（Common Name）</code>的值必须与<code>CA</code>证书不同，其余信息随便即可</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -sha256 `</span><br><span class="line">  -key sign_ca.key `</span><br><span class="line">  -out sign_ca.csr `</span><br><span class="line">  -subj <span class="string">&quot;/C=CN/ST=GD/L=GZ/O=Global Village/OU=IT/CN=sign_ca&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-创建证书-1"><a href="#3-创建证书-1" class="headerlink" title="3.创建证书"></a>3.创建证书</h3><ul>
+<li>生成<code>v3</code>版本证书，携带扩展信息（首选）</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># crt 格式</span></span><br><span class="line">openssl x509 -req -sha256 -CAcreateserial `</span><br><span class="line">  -days 3650 `</span><br><span class="line">  -extfile openssl.cnf `</span><br><span class="line">  -extensions v3_ica `</span><br><span class="line">  -CA root_ca.crt `</span><br><span class="line">  -CAkey root_ca.key `</span><br><span class="line">  -<span class="keyword">in</span> sign_ca.csr `</span><br><span class="line">  -out sign_ca.crt</span><br><span class="line"></span><br><span class="line"><span class="comment"># pem 格式</span></span><br><span class="line">openssl x509 -req -sha256 -CAcreateserial `</span><br><span class="line">  -days 3650 `</span><br><span class="line">  -extfile openssl.cnf `</span><br><span class="line">  -extensions v3_ica `</span><br><span class="line">  -CA root_ca.crt `</span><br><span class="line">  -CAkey root_ca.key `</span><br><span class="line">  -<span class="keyword">in</span> sign_ca.csr `</span><br><span class="line">  -out sign_ca.pem</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>生成<code>v1</code>版本证书</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># crt 格式</span></span><br><span class="line">openssl x509 -req -sha256 -CAcreateserial `</span><br><span class="line">  -days 3650 `</span><br><span class="line">  -CA root_ca.crt `</span><br><span class="line">  -CAkey root_ca.key `</span><br><span class="line">  -<span class="keyword">in</span> sign_ca.csr `</span><br><span class="line">  -out sign_ca.crt</span><br><span class="line"></span><br><span class="line"><span class="comment"># pem 格式</span></span><br><span class="line">openssl x509 -req -sha256 -CAcreateserial `</span><br><span class="line">  -days 3650 `</span><br><span class="line">  -CA root_ca.crt `</span><br><span class="line">  -CAkey root_ca.key `</span><br><span class="line">  -<span class="keyword">in</span> sign_ca.csr `</span><br><span class="line">  -out sign_ca.pem</span><br></pre></td></tr></table></figure>
+
+<h2 id="三、创建服务器证书"><a href="#三、创建服务器证书" class="headerlink" title="三、创建服务器证书"></a>三、创建服务器证书</h2><h3 id="1-创建证书密钥-2"><a href="#1-创建证书密钥-2" class="headerlink" title="1.创建证书密钥"></a>1.创建证书密钥</h3><ul>
+<li>RSA 方式（首选）</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa -out asus_ca.key 4096</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>ECC 方式</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl ecparam -out asus_ca.key -name prime256v1 -genkey</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-创建签名请求-2"><a href="#2-创建签名请求-2" class="headerlink" title="2.创建签名请求"></a>2.创建签名请求</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -sha256 `</span><br><span class="line">  -key asus_ca.key `</span><br><span class="line">  -out asus_ca.csr `</span><br><span class="line">  -subj <span class="string">&quot;/C=CN/ST=GD/L=GZ/O=Global Village/OU=IT/CN=asus_ca&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-创建证书-2"><a href="#3-创建证书-2" class="headerlink" title="3.创建证书"></a>3.创建证书</h3><ul>
+<li>生成<code>v3</code>版本证书，携带扩展信息（首选）</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># crt 格式</span></span><br><span class="line">openssl x509 -req -sha256 -CAcreateserial `</span><br><span class="line">  -days 365 `</span><br><span class="line">  -extfile openssl.cnf `</span><br><span class="line">  -extensions v3_asus_ca `</span><br><span class="line">  -CA sign_ca.crt `</span><br><span class="line">  -CAkey sign_ca.key `</span><br><span class="line">  -<span class="keyword">in</span> asus_ca.csr `</span><br><span class="line">  -out asus_ca.crt</span><br><span class="line"></span><br><span class="line"><span class="comment"># pem 格式</span></span><br><span class="line">openssl x509 -req -sha256 -CAcreateserial `</span><br><span class="line">  -days 365 `</span><br><span class="line">  -extfile openssl.cnf `</span><br><span class="line">  -extensions v3_asus_ca `</span><br><span class="line">  -CA sign_ca.crt `</span><br><span class="line">  -CAkey sign_ca.key `</span><br><span class="line">  -<span class="keyword">in</span> asus_ca.csr `</span><br><span class="line">  -out asus_ca.pem</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>生成<code>v1</code>版本证书</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># crt 格式</span></span><br><span class="line">openssl x509 -req -sha256 -CAcreateserial `</span><br><span class="line">  -days 365 `</span><br><span class="line">  -CA sign_ca.crt `</span><br><span class="line">  -CAkey sign_ca.key `</span><br><span class="line">  -<span class="keyword">in</span> asus_ca.csr `</span><br><span class="line">  -out asus_ca.crt</span><br><span class="line"></span><br><span class="line"><span class="comment"># pem 格式</span></span><br><span class="line">openssl x509 -req -sha256 -CAcreateserial `</span><br><span class="line">  -days 365 `</span><br><span class="line">  -CA sign_ca.crt `</span><br><span class="line">  -CAkey sign_ca.key `</span><br><span class="line">  -<span class="keyword">in</span> asus_ca.csr `</span><br><span class="line">  -out asus_ca.pem</span><br></pre></td></tr></table></figure>
+
+<h2 id="证书转换"><a href="#证书转换" class="headerlink" title="证书转换"></a>证书转换</h2><p>提示：<code>der</code>或<code>crt</code>文件仅包含公钥内容。</p>
+<ul>
+<li>合并<code>crt</code>为证书链</li>
+</ul>
+<blockquote>
+<ol>
+<li>当有中间证书时使用证书链。</li>
+<li>证书链文件不包含当前证书（如第三层的证书链文件不包含第三层证书）。</li>
+</ol>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">type</span> sign_ca.crt root_ca.crt &gt;&gt; asus_ca-chain.crt</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>crt</code>+<code>key</code>转为<code>pfx</code></li>
+</ul>
+<blockquote>
+<ol>
+<li><code>-name</code>设置证书的<code>FriendlyName</code></li>
+<li><code>-certfile</code>提供证书链文件</li>
+</ol>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">openssl pkcs12 -<span class="built_in">export</span> `</span><br><span class="line">  -name asus_ca `</span><br><span class="line">  -certfile asus_ca-chain.crt `</span><br><span class="line">  -inkey asus_ca.key `</span><br><span class="line">  -password pass: `</span><br><span class="line">  -<span class="keyword">in</span> asus_ca.crt `</span><br><span class="line">  -out asus_ca.pfx</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>pfx</code>转为<code>pem</code></li>
+</ul>
+<blockquote>
+<p><code>-nokeys</code>导出时不包含私钥</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">openssl pkcs12 -nodes -<span class="keyword">in</span> asus_ca.pfx -password pass: -out asus_ca.pem</span><br><span class="line">openssl pkcs12 -nodes -nokeys -<span class="keyword">in</span> asus_ca.pfx -password pass: -out asus_ca_nokeys.pem</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>pem</code>转为<code>key</code></li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl rsa -<span class="keyword">in</span> asus_ca.pem -out asus_ca.key</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>pem</code>转为<code>crt</code></li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -<span class="keyword">in</span> asus_ca.pem -out asus_ca.crt</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>pem</code>转为<code>der</code></li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -outform der -<span class="keyword">in</span> asus_ca.pem -out asus_ca.der</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>der</code>转为<code>pem</code></li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -inform der -<span class="keyword">in</span> asus_ca.der -out asus_ca.pem</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>cer</code>转为<code>pem</code></li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -inform der -<span class="keyword">in</span> asus_ca.cer -out asus_ca.pem</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>crt</code>转为<code>pem</code></li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -<span class="keyword">in</span> asus_ca.crt -out asus_ca.pem</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>crt</code>转为<code>der</code></li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -outform der -<span class="keyword">in</span> asus_ca.crt -out asus_ca.der</span><br></pre></td></tr></table></figure>
+
+<h2 id="其他命令"><a href="#其他命令" class="headerlink" title="其他命令"></a>其他命令</h2><ul>
+<li>查看证书</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -<span class="keyword">in</span> asus_ca.crt -text -noout</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>信任证书</li>
+</ul>
+<blockquote>
+<p>certutil 是 windows 平台下的自带工具</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">certutil -addstore -f <span class="string">&quot;root_ca.crt&quot;</span> root_ca.crt</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/openssl/" rel="tag"># openssl</a>
+              <a href="/tags/ca/" rel="tag"># ca</a>
+              <a href="/tags/%E8%87%AA%E7%AD%BE%E5%90%8D%E8%AF%81%E4%B9%A6/" rel="tag"># 自签名证书</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/posts/20230113-ba909db2b1a8.html" rel="prev" title="openid身份认证">
+                  <i class="fa fa-chevron-left"></i> openid身份认证
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/posts/20230114-8a855727a4db.html" rel="next" title="清理dns缓存">
+                  清理dns缓存 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">别听鬼故事</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"mekumiao","repo":"keep-blog-comments","client_id":"34037fb086c6ce4c67cc","client_secret":"d86b31331d4e124b0439ee122dfbdd0031f72700","admin_user":"mekumiao","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"3c67acecf53cb1250cee8fd894a94e81"}</script>
+<script src="/js/third-party/comments/gitalk.js"></script>
+
+</body>
+</html>
